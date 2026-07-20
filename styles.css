@@ -1194,34 +1194,32 @@ input:focus { outline: none; }
 .cmlabel.user .cml-name { color: #fff; }
 .cmlabel.user .cml-count { background: rgba(255,255,255,0.2); color: #fff; }
 
-.comp-filters {
+/* 页签切换：本小区 / 周边小区 */
+.comp-tabs {
   display: flex;
-  gap: 8px;
-  margin: 0 20px 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.comp-filters::-webkit-scrollbar { display: none; }
-.cf-chip {
-  flex-shrink: 0;
-  height: 32px;
-  padding: 0 16px;
-  border-radius: 16px;
+  gap: 0;
+  margin: 4px 20px 16px;
   background: var(--bg);
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  padding: 3px;
+}
+.ctab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 14px;
   font-weight: 500;
   color: var(--muted);
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
   user-select: none;
 }
-.cf-chip.active {
-  background: var(--primary-light);
+.ctab.active {
+  background: #fff;
   color: var(--primary);
   font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 /* 对比摘要 */

@@ -38,14 +38,18 @@ const AREA_DATA = {
 
 // ========== Competition Data ==========
 const COMPETITORS = [
-  { id: 1, community: '仁恒滨河湾', area: '锦江区 · 攀成钢', sqm: 105, layout: '三室两厅', floor: '15F', totalFloor: 28, decoration: '精装', year: 2016, price: 335, similarity: 92, tags: ['面积 -3㎡', '楼层相近', '装修相近'], tagTypes: ['', '', 'advantage'], lat: 30.6415, lng: 104.1025, count: 3 },
-  { id: 2, community: '麓湖生态城', area: '天府新区 · 麓湖', sqm: 112, layout: '三室两厅', floor: '22F', totalFloor: 32, decoration: '精装', year: 2018, price: 345, similarity: 88, tags: ['面积 +4㎡', '楼层 +10F', '房龄更新'], tagTypes: ['disadvantage', 'disadvantage', 'disadvantage'], lat: 30.468, lng: 104.076, count: 5 },
-  { id: 3, community: '中海城南一号', area: '高新区 · 金融城', sqm: 98, layout: '三室两厅', floor: '8F', totalFloor: 26, decoration: '简装', year: 2014, price: 318, similarity: 85, tags: ['面积 -10㎡', '楼层 -4F', '装修偏差'], tagTypes: ['', '', 'advantage'], lat: 30.575, lng: 104.058, count: 2 },
-  { id: 4, community: '天府世家', area: '高新区 · 大源', sqm: 108, layout: '三室两厅', floor: '18F', totalFloor: 30, decoration: '精装', year: 2017, price: 338, similarity: 90, tags: ['面积相同', '楼层 +6F', '房龄相近'], tagTypes: ['advantage', 'disadvantage', ''], lat: 30.537, lng: 104.045, count: 4 },
-  { id: 5, community: '南苑小区', area: '高新区 · 金融城', sqm: 115, layout: '三室两厅', floor: '6F', totalFloor: 18, decoration: '豪装', year: 2013, price: 355, similarity: 78, tags: ['面积 +7㎡', '楼层 -6F', '装修更好'], tagTypes: ['disadvantage', '', 'disadvantage'], lat: 30.573, lng: 104.065, count: 6 },
-  { id: 6, community: '凤凰城', area: '锦江区 · 东大街', sqm: 102, layout: '三室两厅', floor: '12F', totalFloor: 32, decoration: '精装', year: 2016, price: 320, similarity: 86, tags: ['面积 -6㎡', '楼层相近', '房龄相近'], tagTypes: ['', '', ''], lat: 30.647, lng: 104.092, count: 3 },
-  { id: 7, community: '誉峰', area: '高新区 · 金融城', sqm: 106, layout: '三室两厅', floor: '25F', totalFloor: 38, decoration: '精装', year: 2017, price: 348, similarity: 82, tags: ['面积 -2㎡', '楼层 +13F', '景观更好'], tagTypes: ['', 'disadvantage', 'disadvantage'], lat: 30.581, lng: 104.059, count: 2 },
-  { id: 8, community: '复地金融岛', area: '高新区 · 锦江畔', sqm: 110, layout: '三室两厅', floor: '10F', totalFloor: 24, decoration: '精装', year: 2019, price: 362, similarity: 74, tags: ['面积 +2㎡', '楼层 -2F', '房龄更新'], tagTypes: ['disadvantage', '', 'disadvantage'], lat: 30.570, lng: 104.078, count: 1 }
+  // ===== 本小区 · 锦城南府 =====
+  { id: 1, community: '锦城南府', area: '高新区 · 天府三街', sqm: 95, layout: '三室一厅', floor: '8F', totalFloor: 30, decoration: '简装', year: 2015, price: 295, similarity: 88, tags: ['面积 -13㎡', '楼层 -4F', '装修偏差'], tagTypes: ['', '', 'advantage'], lat: 30.558, lng: 104.058, count: 2, sameCommunity: true },
+  { id: 2, community: '锦城南府', area: '高新区 · 天府三街', sqm: 120, layout: '四室两厅', floor: '25F', totalFloor: 30, decoration: '精装', year: 2015, price: 368, similarity: 82, tags: ['面积 +12㎡', '楼层 +13F', '户型更大'], tagTypes: ['disadvantage', 'disadvantage', 'disadvantage'], lat: 30.559, lng: 104.057, count: 1, sameCommunity: true },
+  // ===== 周边小区 =====
+  { id: 3, community: '仁恒滨河湾', area: '锦江区 · 攀成钢', sqm: 105, layout: '三室两厅', floor: '15F', totalFloor: 28, decoration: '精装', year: 2016, price: 335, similarity: 92, tags: ['面积 -3㎡', '楼层相近', '装修相近'], tagTypes: ['', '', 'advantage'], lat: 30.6415, lng: 104.1025, count: 3 },
+  { id: 4, community: '麓湖生态城', area: '天府新区 · 麓湖', sqm: 112, layout: '三室两厅', floor: '22F', totalFloor: 32, decoration: '精装', year: 2018, price: 345, similarity: 88, tags: ['面积 +4㎡', '楼层 +10F', '房龄更新'], tagTypes: ['disadvantage', 'disadvantage', 'disadvantage'], lat: 30.468, lng: 104.076, count: 5 },
+  { id: 5, community: '中海城南一号', area: '高新区 · 金融城', sqm: 98, layout: '三室两厅', floor: '8F', totalFloor: 26, decoration: '简装', year: 2014, price: 318, similarity: 85, tags: ['面积 -10㎡', '楼层 -4F', '装修偏差'], tagTypes: ['', '', 'advantage'], lat: 30.575, lng: 104.058, count: 2 },
+  { id: 6, community: '天府世家', area: '高新区 · 大源', sqm: 108, layout: '三室两厅', floor: '18F', totalFloor: 30, decoration: '精装', year: 2017, price: 338, similarity: 90, tags: ['面积相同', '楼层 +6F', '房龄相近'], tagTypes: ['advantage', 'disadvantage', ''], lat: 30.537, lng: 104.045, count: 4 },
+  { id: 7, community: '南苑小区', area: '高新区 · 金融城', sqm: 115, layout: '三室两厅', floor: '6F', totalFloor: 18, decoration: '豪装', year: 2013, price: 355, similarity: 78, tags: ['面积 +7㎡', '楼层 -6F', '装修更好'], tagTypes: ['disadvantage', '', 'disadvantage'], lat: 30.573, lng: 104.065, count: 6 },
+  { id: 8, community: '誉峰', area: '高新区 · 金融城', sqm: 106, layout: '三室两厅', floor: '25F', totalFloor: 38, decoration: '精装', year: 2017, price: 348, similarity: 82, tags: ['面积 -2㎡', '楼层 +13F', '景观更好'], tagTypes: ['', 'disadvantage', 'disadvantage'], lat: 30.581, lng: 104.059, count: 2 },
+  { id: 9, community: '复地金融岛', area: '高新区 · 锦江畔', sqm: 110, layout: '三室两厅', floor: '10F', totalFloor: 24, decoration: '精装', year: 2019, price: 362, similarity: 74, tags: ['面积 +2㎡', '楼层 -2F', '房龄更新'], tagTypes: ['disadvantage', '', 'disadvantage'], lat: 30.570, lng: 104.078, count: 1 },
+  { id: 10, community: '凤凰城', area: '锦江区 · 东大街', sqm: 102, layout: '三室两厅', floor: '12F', totalFloor: 32, decoration: '精装', year: 2016, price: 320, similarity: 86, tags: ['面积 -6㎡', '楼层相近', '房龄相近'], tagTypes: ['', '', ''], lat: 30.647, lng: 104.092, count: 3 }
 ];
 
 // ========== State ==========
@@ -118,6 +122,7 @@ function switchTab(tab) {
   if (tab === 'competition') {
     renderCompetition();
     initCompetitionMap();
+    setTimeout(updateMapScope, 100);
   }
 }
 
@@ -545,7 +550,8 @@ function switchCommunity(name) {
 }
 
 // ========== Competition ==========
-let compFilter = 'all';
+// ========== Competition State ==========
+let compScope = 'same'; // 'same' | 'nearby'
 let compMapInstance = null;
 
 function initCompetitionMap() {
@@ -578,7 +584,7 @@ function initCompetitionMap() {
   }).addTo(compMapInstance)
     .bindPopup('<b>🏠 锦城南府</b><br/>6栋1203 · 108㎡<br/>估价 <b>328万</b>');
 
-  // Competitor markers with name + count labels
+  // Competitor markers — stored for scope toggling
   const markerGroup = [];
   COMPETITORS.forEach((c, i) => {
     const simClass = c.similarity >= 88 ? 'high' : c.similarity >= 80 ? 'medium' : 'low';
@@ -594,8 +600,11 @@ function initCompetitionMap() {
     marker.bindPopup(
       `<b>${c.community}</b><br/>${c.area}<br/><b>${c.price}万</b> · ${c.sqm}㎡ · 相似度 ${c.similarity}% · ${c.count}套在售`
     );
+    marker._sameCommunity = c.sameCommunity || false;
     markerGroup.push(marker);
   });
+
+  compMapInstance._markerGroup = markerGroup;
 
   // Fit bounds to show everything
   const group = L.featureGroup(markerGroup);
@@ -604,19 +613,28 @@ function initCompetitionMap() {
   setTimeout(() => compMapInstance.invalidateSize(), 300);
 }
 
+function updateMapScope() {
+  if (!compMapInstance || !compMapInstance._markerGroup) return;
+  compMapInstance._markerGroup.forEach(m => {
+    const visible = compScope === 'nearby' || m._sameCommunity;
+    if (visible) compMapInstance.addLayer(m);
+    else compMapInstance.removeLayer(m);
+  });
+}
+
 function renderCompetition() {
   const userPrice = state.valuationData ? state.valuationData.total : 328;
   const userArea = Number(getFormProperty().area) || 108;
 
-  const filtered = compFilter === 'all' ? COMPETITORS : COMPETITORS.filter(c => {
-    if (compFilter === 'area') return Math.abs(c.sqm - userArea) <= 10;
-    if (compFilter === 'price') return Math.abs(c.price - userPrice) <= 20;
-    if (compFilter === 'age') return Math.abs((c.year || 2016) - 2015) <= 3;
-    return true;
+  // Filter by scope (same community / nearby)
+  const filtered = COMPETITORS.filter(c => {
+    if (compScope === 'same') return c.sameCommunity === true;
+    return !c.sameCommunity;
   });
 
+  const scopeLabel = compScope === 'same' ? '本小区' : '周边小区';
   const summaryEl = document.querySelector('#compSummary');
-  if (summaryEl) summaryEl.innerHTML = `找到 <strong>${filtered.length}</strong> 套与您的房产相似的竞争房源`;
+  if (summaryEl) summaryEl.innerHTML = `在 <strong>${scopeLabel}</strong> 中找到 <strong>${filtered.length}</strong> 套与您的房产相似的竞争房源`;
 
   const avgPrice = filtered.length ? Math.round(filtered.reduce((s, c) => s + c.price, 0) / filtered.length) : 0;
   const avgSqm = filtered.length ? Math.round(filtered.reduce((s, c) => s + c.sqm, 0) / filtered.length) : 0;
@@ -781,13 +799,14 @@ function init() {
     }
   });
 
-  // Competition filter chips
-  document.querySelectorAll('.cf-chip').forEach(el => {
+  // Competition scope tabs
+  document.querySelectorAll('.ctab').forEach(el => {
     el.addEventListener('click', () => {
-      document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.ctab').forEach(c => c.classList.remove('active'));
       el.classList.add('active');
-      compFilter = el.dataset.filter || 'all';
+      compScope = el.dataset.scope || 'same';
       renderCompetition();
+      updateMapScope();
     });
   });
 
