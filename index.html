@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI 房产估价助手</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="phone-frame" id="app">
+    <!-- ===== 状态栏 ===== -->
+    <div class="status-bar">
+      <span class="st-time">9:41</span>
+      <div class="st-icons">
+        <span class="st-signal"></span>
+        <span class="st-wifi"></span>
+        <span class="st-battery"></span>
+      </div>
+    </div>
+
+    <!-- ===== 导航栏 ===== -->
+    <div class="nav-bar" id="navBar">
+      <button class="nav-back" id="navBack" hidden>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        返回
+      </button>
+      <span class="nav-title" id="navTitle">AI房产价值评估</span>
+      <div class="nav-placeholder"></div>
+    </div>
+
+    <!-- ===== 内容区域 ===== -->
+    <div class="app-body" id="appBody">
+
+      <!-- ==================== TAB: 首页 ==================== -->
+      <div class="tab-page active" id="tab-home">
+        <div class="page-scroll">
+          <!-- Hero -->
+          <div class="home-hero">
+            <div class="home-hero-bg"></div>
+            <div class="home-hero-content">
+              <p class="home-subtitle">AI 房产价值评估</p>
+              <h1 class="home-title">了解你的房子<br/>现在真实市场价值</h1>
+              <button class="home-cta" id="btnStartValuation">
+                <span>开始估价</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 热门小区 -->
+          <section class="section-block">
+            <div class="section-header">
+              <h2>热门小区估价</h2>
+              <span class="section-more">更多 ›</span>
+            </div>
+            <div class="community-strip">
+              <div class="community-chip active">仁恒滨河湾</div>
+              <div class="community-chip">麓湖生态城</div>
+              <div class="community-chip">攀成钢区域</div>
+              <div class="community-chip">中海城南一号</div>
+            </div>
+            <div class="community-card" id="hotCommunityCard">
+              <div class="cc-info">
+                <span class="cc-name">仁恒滨河湾</span>
+                <span class="cc-loc">锦江区 · 攀成钢</span>
+                <span class="cc-price">参考均价 <strong>32,800</strong> 元/㎡</span>
+              </div>
+              <div class="cc-trend up">+2.3%</div>
+            </div>
+          </section>
+
+          <!-- 市场动态 -->
+          <section class="section-block">
+            <div class="section-header">
+              <h2>市场动态</h2>
+              <span class="section-more">详情 ›</span>
+            </div>
+            <div class="market-strip">
+              <div class="ms-item down">
+                <span class="ms-label">本周成都二手房成交量</span>
+                <span class="ms-value"><span class="arrow">↓</span> 1,286 套</span>
+                <span class="ms-change">较上周 -5.2%</span>
+              </div>
+              <div class="ms-divider"></div>
+              <div class="ms-item">
+                <span class="ms-label">平均成交周期</span>
+                <span class="ms-value warn">↑ 42 天</span>
+                <span class="ms-change">较上周 +3 天</span>
+              </div>
+              <div class="ms-divider"></div>
+              <div class="ms-item up">
+                <span class="ms-label">新增挂牌量</span>
+                <span class="ms-value"><span class="arrow">↓</span> 892 套</span>
+                <span class="ms-change">较上周 -8.1%</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ==================== TAB: 估价 ==================== -->
+      <div class="tab-page" id="tab-valuation">
+
+        <!-- 子页面：输入 -->
+        <div class="sub-page active" id="page-input">
+          <div class="page-scroll">
+            <div class="sp-header">
+              <h2>请输入您的房屋地址</h2>
+              <p>只需 5 项信息，20 秒完成</p>
+            </div>
+            <div class="form-card" id="valuationForm">
+              <div class="form-group">
+                <label>城市</label>
+                <input type="text" class="form-input" id="vCity" value="成都" placeholder="选择城市" />
+              </div>
+              <div class="form-group">
+                <label>小区名称</label>
+                <input type="text" class="form-input" id="vCommunity" value="锦城南府" placeholder="请输入小区名称" />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>楼栋</label>
+                  <input type="text" class="form-input" id="vBuilding" value="6栋" placeholder="如：6栋" />
+                </div>
+                <div class="form-group">
+                  <label>房号</label>
+                  <input type="text" class="form-input" id="vUnit" value="1203" placeholder="如：1203" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>建筑面积 (㎡)</label>
+                <input type="number" class="form-input" id="vArea" value="108" placeholder="请输入建筑面积" />
+              </div>
+            </div>
+            <button class="btn-primary btn-full" id="btnAnalyze">开始分析</button>
+          </div>
+        </div>
+
+        <!-- 子页面：确认 -->
+        <div class="sub-page" id="page-confirm">
+          <div class="page-scroll">
+            <div class="sp-header">
+              <h2>确认房屋信息</h2>
+              <p>系统识别到以下信息，请确认</p>
+            </div>
+            <div class="confirm-card">
+              <div class="confirm-address" id="confirmCommunity">锦城南府 <span id="confirmUnit">6栋1203</span></div>
+              <div class="confirm-grid">
+                <div class="cg-item">
+                  <span class="cg-label">面积</span>
+                  <span class="cg-value" id="confirmArea">108㎡</span>
+                </div>
+                <div class="cg-item">
+                  <span class="cg-label">楼层</span>
+                  <span class="cg-value">12/30层</span>
+                </div>
+                <div class="cg-item">
+                  <span class="cg-label">户型</span>
+                  <span class="cg-value">三室两厅</span>
+                </div>
+                <div class="cg-item">
+                  <span class="cg-label">朝向</span>
+                  <span class="cg-value">东南</span>
+                </div>
+                <div class="cg-item">
+                  <span class="cg-label">装修</span>
+                  <span class="cg-value">精装</span>
+                </div>
+                <div class="cg-item">
+                  <span class="cg-label">建造年份</span>
+                  <span class="cg-value">约 2015 年</span>
+                </div>
+              </div>
+              <div class="confirm-note">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#0f7b63" stroke-width="2"/><path d="M12 16V12M12 8H12.01" stroke="#0f7b63" stroke-width="2" stroke-linecap="round"/></svg>
+                信息越准确，估价越接近真实市场价格
+              </div>
+            </div>
+            <div class="btn-group">
+              <button class="btn-primary btn-half" id="btnConfirmCorrect">信息正确</button>
+              <button class="btn-outline btn-half" id="btnConfirmModify">修改信息</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子页面：计算中 -->
+        <div class="sub-page" id="page-calculating">
+          <div class="calc-container">
+            <div class="calc-header">
+              <div class="calc-spinner"></div>
+              <h2>正在分析您的房屋价值</h2>
+            </div>
+            <div class="calc-steps" id="calcSteps">
+              <div class="calc-step" data-step="1">
+                <span class="step-icon">1</span>
+                <span class="step-text">匹配同小区成交案例</span>
+                <span class="step-status"></span>
+              </div>
+              <div class="calc-step" data-step="2">
+                <span class="step-icon">2</span>
+                <span class="step-text">分析房屋特征</span>
+                <span class="step-status"></span>
+              </div>
+              <div class="calc-step" data-step="3">
+                <span class="step-icon">3</span>
+                <span class="step-text">计算市场变化</span>
+                <span class="step-status"></span>
+              </div>
+              <div class="calc-step" data-step="4">
+                <span class="step-icon">4</span>
+                <span class="step-text">多模型交叉验证</span>
+                <span class="step-status"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子页面：估价报告 -->
+        <div class="sub-page" id="page-report">
+          <div class="page-scroll">
+
+            <!-- 第一屏：价格结果 -->
+            <div class="report-hero">
+              <p class="report-hero-label">市场参考价值</p>
+              <div class="report-price" id="reportPrice">328</div>
+              <div class="report-unit">万元</div>
+              <div class="report-range">合理成交区间 <strong id="reportRangeLow">320</strong> - <strong id="reportRangeHigh">335</strong> 万</div>
+              <div class="report-confidence">
+                <div class="rc-stars" id="reportStars">
+                  <span class="star active"></span>
+                  <span class="star active"></span>
+                  <span class="star active"></span>
+                  <span class="star active"></span>
+                  <span class="star"></span>
+                </div>
+                <span class="rc-text">估价可信度较高</span>
+              </div>
+              <div class="rc-detail">
+                依据 <strong id="reportSamples">38</strong> 套相似房源 · <strong>3</strong> 种模型验证
+              </div>
+            </div>
+
+            <!-- 第二屏：价格形成分析 -->
+            <div class="report-section">
+              <h3 class="rs-title">价格形成分析</h3>
+              <div class="analysis-card" id="analysisCard"></div>
+            </div>
+
+            <!-- 第三屏：成交验证 -->
+            <div class="report-section">
+              <h3 class="rs-title">类似房源参考</h3>
+              <div class="ref-cards" id="refCards">
+                <div class="ref-card">
+                  <div class="rc-badge">同小区</div>
+                  <div class="rc-detail-grid">
+                    <div><span>面积</span><strong>105㎡</strong></div>
+                    <div><span>楼层</span><strong>15楼</strong></div>
+                    <div><span>装修</span><strong>精装</strong></div>
+                    <div><span>成交</span><strong class="price">318万</strong></div>
+                  </div>
+                  <div class="rc-diff">
+                    <div class="rc-diff-label">与您的差异</div>
+                    <div class="rc-diff-text">面积 -3㎡ · 楼层接近</div>
+                  </div>
+                </div>
+                <div class="ref-card">
+                  <div class="rc-badge">同小区</div>
+                  <div class="rc-detail-grid">
+                    <div><span>面积</span><strong>112㎡</strong></div>
+                    <div><span>楼层</span><strong>22楼</strong></div>
+                    <div><span>装修</span><strong>精装</strong></div>
+                    <div><span>成交</span><strong class="price">340万</strong></div>
+                  </div>
+                  <div class="rc-diff">
+                    <div class="rc-diff-label">您的优势</div>
+                    <div class="rc-diff-text">装修更新 · 税费更低</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 第四屏：模型验证 -->
+            <div class="report-section">
+              <h3 class="rs-title">多维度验证结果</h3>
+              <p class="rs-sub">不同角度分析均指向这个区间</p>
+              <div class="model-list" id="modelList">
+                <div class="model-item">
+                  <span class="mi-label">成交匹配模型</span>
+                  <div class="mi-bar"><span style="width: 99%"></span></div>
+                  <span class="mi-val">325 万</span>
+                </div>
+                <div class="model-item">
+                  <span class="mi-label">房屋特征模型</span>
+                  <div class="mi-bar"><span style="width: 94%"></span></div>
+                  <span class="mi-val">330 万</span>
+                </div>
+                <div class="model-item">
+                  <span class="mi-label">市场趋势模型</span>
+                  <div class="mi-bar"><span style="width: 82%"></span></div>
+                  <span class="mi-val">328 万</span>
+                </div>
+                <div class="model-item final">
+                  <span class="mi-label">综合评估</span>
+                  <div class="mi-bar"><span style="width: 100%"></span></div>
+                  <span class="mi-val strong">328 万</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 第五屏：用户反馈 -->
+            <div class="report-section feedback-section">
+              <h3 class="rs-title">觉得估价不准确？</h3>
+              <p class="rs-sub">告诉我们更多信息，重新计算</p>
+              <div class="feedback-grid" id="feedbackGrid">
+                <button class="feedback-btn" data-adjust="+12">我的装修更好</button>
+                <button class="feedback-btn" data-adjust="+8">我的楼层更优</button>
+                <button class="feedback-btn" data-adjust="+5">我的景观更好</button>
+                <button class="feedback-btn" data-adjust="-10">位置偏了</button>
+                <button class="feedback-btn custom" id="btnCustomFeedback">其他补充</button>
+              </div>
+              <div class="feedback-result" id="feedbackResult" hidden>
+                <div class="fr-icon">↻</div>
+                <p>重新计算中...</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== TAB: 我的房产 ==================== -->
+      <div class="tab-page" id="tab-properties">
+
+        <!-- 子页面：列表 -->
+        <div class="sub-page active" id="page-property-list">
+          <div class="page-scroll">
+            <div class="sp-header">
+              <h2>我的房产</h2>
+            </div>
+
+            <div class="property-card" id="myPropertyCard">
+              <div class="pc-header">
+                <div class="pc-title">锦城南府</div>
+                <div class="pc-subtitle">高新区 · 天府三街</div>
+              </div>
+              <div class="pc-meta">
+                <span>108㎡</span>
+                <span>三室两厅</span>
+                <span>12/30层</span>
+              </div>
+              <div class="pc-value">
+                <div class="pcv-current">
+                  <span class="pcv-label">当前估值</span>
+                  <span class="pcv-price" id="propCurrentPrice">328 万</span>
+                </div>
+                <div class="pcv-trend up">
+                  <span class="pcv-trend-label">近 6 个月</span>
+                  <span class="pcv-trend-val">+2.5%</span>
+                </div>
+              </div>
+              <div class="pc-chart" id="priceChart">
+                <!-- CSS line chart -->
+                <svg viewBox="0 0 300 80" class="chart-svg">
+                  <polyline
+                    points="0,60 60,55 120,58 180,45 240,40 300,35"
+                    fill="none"
+                    stroke="#0f7b63"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <circle cx="300" cy="35" r="4" fill="#0f7b63" />
+                </svg>
+                <div class="chart-labels">
+                  <span>2月</span>
+                  <span>3月</span>
+                  <span>4月</span>
+                  <span>5月</span>
+                  <span>6月</span>
+                  <span>7月</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-header" style="padding:0 4px;margin-top:20px;">
+              <h2 style="font-size:17px;">最新动态</h2>
+            </div>
+
+            <div class="property-timeline">
+              <div class="pt-item">
+                <div class="pt-dot"></div>
+                <div class="pt-content">
+                  <span class="pt-label">最新成交</span>
+                  <span class="pt-desc">8栋1202 成交 325万</span>
+                  <span class="pt-time">3 天前</span>
+                </div>
+              </div>
+              <div class="pt-item">
+                <div class="pt-dot"></div>
+                <div class="pt-content">
+                  <span class="pt-label">估值更新</span>
+                  <span class="pt-desc">您的房产价值更新至 328 万</span>
+                  <span class="pt-time">1 周前</span>
+                </div>
+              </div>
+              <div class="pt-item">
+                <div class="pt-dot"></div>
+                <div class="pt-content">
+                  <span class="pt-label">同小区挂牌</span>
+                  <span class="pt-desc">新增 3 套同户型挂牌</span>
+                  <span class="pt-time">2 周前</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子页面：详情 -->
+        <div class="sub-page" id="page-property-detail">
+          <div class="page-scroll">
+            <div class="sp-header">
+              <h2>房产详情</h2>
+            </div>
+
+            <div class="detail-card">
+              <div class="dc-row">
+                <span class="dc-label">小区</span>
+                <span class="dc-value">锦城南府</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">地址</span>
+                <span class="dc-value">成都市高新区天府三街888号</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">户型</span>
+                <span class="dc-value">三室两厅一厨两卫</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">面积</span>
+                <span class="dc-value">108 ㎡</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">楼层</span>
+                <span class="dc-value">12层 / 共30层</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">朝向</span>
+                <span class="dc-value">东南</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">装修</span>
+                <span class="dc-value">精装</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">建造年份</span>
+                <span class="dc-value">约 2015 年</span>
+              </div>
+              <div class="dc-row">
+                <span class="dc-label">产权</span>
+                <span class="dc-value">70年住宅</span>
+              </div>
+            </div>
+
+            <div class="section-header" style="padding:0 4px;margin-top:20px;">
+              <h2 style="font-size:17px;">价值变化</h2>
+            </div>
+
+            <div class="detail-value-chart">
+              <svg viewBox="0 0 320 120" class="chart-svg-lg">
+                <!-- grid lines -->
+                <line x1="0" y1="20" x2="320" y2="20" stroke="#eee" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="50" x2="320" y2="50" stroke="#eee" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="80" x2="320" y2="80" stroke="#eee" stroke-width="1" stroke-dasharray="4,4"/>
+                <line x1="0" y1="110" x2="320" y2="110" stroke="#eee" stroke-width="1"/>
+                <!-- line -->
+                <polyline
+                  points="0,100 20,95 45,98 70,99 95,93 120,90 145,92 170,85 195,80 220,78 245,75 270,68 295,62 320,55"
+                  fill="none"
+                  stroke="#0f7b63"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <!-- area -->
+                <polygon
+                  points="0,100 20,95 45,98 70,99 95,93 120,90 145,92 170,85 195,80 220,78 245,75 270,68 295,62 320,55 320,120 0,120"
+                  fill="url(#areaGrad)"
+                  opacity="0.15"
+                />
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0f7b63"/>
+                    <stop offset="100%" stop-color="#0f7b63" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="chart-labels" style="grid-template-columns:repeat(7,1fr);">
+                <span>1月</span><span>2月</span><span>3月</span><span>4月</span><span>5月</span><span>6月</span><span>7月</span>
+              </div>
+            </div>
+
+            <div class="detail-nearby">
+              <h3 class="rs-title">同小区最近成交</h3>
+              <div class="nearby-table">
+                <div class="nt-row header">
+                  <span>户型</span><span>面积</span><span>楼层</span><span>成交价</span><span>时间</span>
+                </div>
+                <div class="nt-row">
+                  <span>三室两厅</span><span>105㎡</span><span>15F</span><span>318万</span><span>06/28</span>
+                </div>
+                <div class="nt-row">
+                  <span>三室两厅</span><span>112㎡</span><span>22F</span><span>340万</span><span>06/15</span>
+                </div>
+                <div class="nt-row">
+                  <span>两室两厅</span><span>89㎡</span><span>8F</span><span>265万</span><span>06/02</span>
+                </div>
+                <div class="nt-row">
+                  <span>四室两厅</span><span>142㎡</span><span>28F</span><span>445万</span><span>05/20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== TAB: 市场 ==================== -->
+      <div class="tab-page" id="tab-market">
+        <div class="page-scroll">
+          <div class="sp-header">
+            <h2>市场行情</h2>
+          </div>
+
+          <!-- City level -->
+          <section class="section-block" style="margin:0;border-radius:0;">
+            <div class="market-city-header">
+              <span class="mc-city">成都</span>
+              <span class="mc-badge">二手房市场</span>
+            </div>
+            <div class="market-kpi-row">
+              <div class="mk-item">
+                <span class="mk-label">挂牌均价</span>
+                <span class="mk-value">18,650</span>
+                <span class="mk-unit">元/㎡</span>
+              </div>
+              <div class="mk-item">
+                <span class="mk-label">成交均价</span>
+                <span class="mk-value">16,280</span>
+                <span class="mk-unit">元/㎡</span>
+              </div>
+              <div class="mk-item">
+                <span class="mk-label">挂牌量</span>
+                <span class="mk-value">82,456</span>
+                <span class="mk-unit">套</span>
+              </div>
+            </div>
+            <div class="market-trend-labels">
+              <div class="mtl-item down">
+                <span>成交趋势</span>
+                <span class="mtl-val">↓ 3.2%</span>
+              </div>
+              <div class="mtl-item up">
+                <span>价格趋势</span>
+                <span class="mtl-val">↑ 1.1%</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Area level -->
+          <section class="section-block">
+            <div class="section-header">
+              <h2>区域行情</h2>
+            </div>
+            <div class="area-tabs" id="areaTabs">
+              <span class="at-item active" data-area="wuhou">武侯</span>
+              <span class="at-item" data-area="gaoxin">高新</span>
+              <span class="at-item" data-area="jinjiang">锦江</span>
+              <span class="at-item" data-area="qingyang">青羊</span>
+            </div>
+            <div class="area-data" id="areaData">
+              <div class="ad-row">
+                <span class="ad-label">近半年成交均价</span>
+                <span class="ad-bar"><span style="width:62%"></span></span>
+                <span class="ad-val down">-3.0%</span>
+              </div>
+              <div class="ad-row">
+                <span class="ad-label">近半年挂牌量</span>
+                <span class="ad-bar"><span style="width:78%"></span></span>
+                <span class="ad-val up">+5.2%</span>
+              </div>
+              <div class="ad-row">
+                <span class="ad-label">平均成交周期</span>
+                <span class="ad-bar"><span style="width:55%"></span></span>
+                <span class="ad-val warn">53 天</span>
+              </div>
+              <div class="ad-row">
+                <span class="ad-label">议价空间</span>
+                <span class="ad-bar"><span style="width:45%"></span></span>
+                <span class="ad-val">4.2%</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Community level -->
+          <section class="section-block">
+            <div class="section-header">
+              <h2>小区行情</h2>
+              <span class="section-more" style="font-size:13px;">输入小区查询 ›</span>
+            </div>
+            <div class="community-market-card">
+              <div class="cmc-header">
+                <span class="cmc-name">锦城南府</span>
+                <span class="cmc-area">高新区</span>
+              </div>
+              <div class="cmc-grid">
+                <div>
+                  <span class="cmc-label">挂牌</span>
+                  <span class="cmc-value">15 套</span>
+                </div>
+                <div>
+                  <span class="cmc-label">成交</span>
+                  <span class="cmc-value">5 套</span>
+                </div>
+                <div>
+                  <span class="cmc-label">成交周期</span>
+                  <span class="cmc-value">70 天</span>
+                </div>
+                <div>
+                  <span class="cmc-label">均价</span>
+                  <span class="cmc-value">30,800/㎡</span>
+                </div>
+              </div>
+            </div>
+            <div class="community-market-card" style="margin-top:12px;">
+              <div class="cmc-header">
+                <span class="cmc-name">仁恒滨河湾</span>
+                <span class="cmc-area">锦江区</span>
+              </div>
+              <div class="cmc-grid">
+                <div>
+                  <span class="cmc-label">挂牌</span>
+                  <span class="cmc-value">22 套</span>
+                </div>
+                <div>
+                  <span class="cmc-label">成交</span>
+                  <span class="cmc-value">8 套</span>
+                </div>
+                <div>
+                  <span class="cmc-label">成交周期</span>
+                  <span class="cmc-value">45 天</span>
+                </div>
+                <div>
+                  <span class="cmc-label">均价</span>
+                  <span class="cmc-value">32,800/㎡</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ==================== TAB: 竞争地图 ==================== -->
+      <div class="tab-page" id="tab-competition">
+        <div class="page-scroll">
+          <div class="sp-header">
+            <h2>竞争地图</h2>
+            <p id="compSummary">找到 <strong>8</strong> 套与您的房产相似的竞争房源</p>
+          </div>
+
+          <!-- 筛选器 -->
+          <div class="comp-filters" id="compFilters">
+            <span class="cf-chip active" data-filter="all">全部</span>
+            <span class="cf-chip" data-filter="area">面积相近</span>
+            <span class="cf-chip" data-filter="price">价格相近</span>
+            <span class="cf-chip" data-filter="age">房龄相近</span>
+          </div>
+
+          <!-- 对比摘要 -->
+          <div class="comp-summary">
+            <div class="cs-row">
+              <div class="cs-item yours">
+                <span class="cs-label">您的房产</span>
+                <span class="cs-val" id="csYourPrice">328 万</span>
+                <span class="cs-meta" id="csYourMeta">108㎡ · 精装</span>
+              </div>
+              <div class="cs-vs">VS</div>
+              <div class="cs-item avg">
+                <span class="cs-label">竞争平均</span>
+                <span class="cs-val" id="csAvgPrice">330 万</span>
+                <span class="cs-meta" id="csAvgMeta">106㎡ · 精装</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 地图 -->
+          <div class="comp-map" id="compMap"></div>
+
+          <!-- 竞争列表 -->
+          <div class="comp-list" id="compList"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== 底部 Tab 栏 ===== -->
+    <div class="tab-bar" id="tabBar">
+      <div class="tab-item active" data-tab="home">
+        <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3L21 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10V20H19V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>首页</span>
+      </div>
+      <div class="tab-item" data-tab="valuation">
+        <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8V16M8 12H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>估价</span>
+      </div>
+      <div class="tab-item" data-tab="competition">
+        <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3L12 21M12 3L8 7M12 3L16 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>竞争</span>
+      </div>
+      <div class="tab-item" data-tab="properties">
+        <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 9V6C8 4.89543 8.89543 4 10 4H14C15.1046 4 16 4.89543 16 6V9" stroke="currentColor" stroke-width="1.8"/><path d="M12 13V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span>我的</span>
+      </div>
+      <div class="tab-item" data-tab="market">
+        <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 17L9 11L13 15L21 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7H21V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>市场</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
