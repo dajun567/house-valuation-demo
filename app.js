@@ -264,9 +264,19 @@ function calculateValuation(property) {
     adjustments: adjustments,
     totalAdjust: totalAdjust,
     total: total,
+    trend: [
+      { month: '2月', price: 305 },
+      { month: '3月', price: 312 },
+      { month: '4月', price: 318 },
+      { month: '5月', price: 325 },
+      { month: '6月', price: 330 },
+      { month: '本月', price: total }
+    ],
     units: [
-      { area: '105㎡', floor: '15楼', decoration: '精装', price: '318万', diff: '面积 -3㎡ · 楼层接近', diffLabel: '与您的差异' },
-      { area: '112㎡', floor: '22楼', decoration: '精装', price: '340万', diff: '装修更新 · 税费更低', diffLabel: '您的优势' }
+      { area: '105㎡', floor: '15F', decoration: '精装', price: '318万', date: '2026-06-15', cycle: '23天', priceChanges: '降价1次', negotiation: '5万', diff: '面积 -3㎡ · 楼层接近', diffLabel: '与您的差异', tag: '特殊楼层', tagClass: 'tag-warning', tagDesc: '该房源位于设备层正下方，部分买家介意设备运行噪音，最终成交价低于同户型正常楼层约5%。建议实地感受噪音情况后再评估参考价值。' },
+      { area: '112㎡', floor: '22F', decoration: '精装', price: '340万', date: '2026-05-28', cycle: '45天', priceChanges: '涨1次·降2次', negotiation: '8万', diff: '装修更新 · 税费更低', diffLabel: '您的优势', tag: '房东急售', tagClass: 'tag-danger', tagDesc: '业主因急需置换新房，挂牌价低于市场价约8%，挂牌仅23天即成交。议价空间较大（砍价8万），属于市场中难得的捡漏机会，与普通房源直接对比时需注意此特殊性。' },
+      { area: '98㎡', floor: '9F', decoration: '简装', price: '295万', date: '2026-04-10', cycle: '62天', priceChanges: '降价3次', negotiation: '12万', diff: '面积 -10㎡ · 简装', diffLabel: '与您的差异', tag: '一线临湖', tagClass: 'tag-info', tagDesc: '该房源位于锦江畔第一排，主卧和客厅正对江景，视野无遮挡。这类一线临湖景观资源稀缺，成交价溢价约10-15%，与同小区非景观房源价差明显。对于非景观房源的估价参考价值有限。' },
+      { area: '120㎡', floor: '20F', decoration: '精装', price: '350万', date: '2026-07-05', cycle: '18天', priceChanges: '无', negotiation: '3万', diff: '面积 +12㎡ · 楼层更高', diffLabel: '您的差异', tag: '', tagClass: '' }
     ],
     models: [
       { label: '成交匹配模型', value: '325 万', width: 99 },
@@ -325,24 +335,79 @@ function populateReport() {
     `;
   }
 
+  // Price trend chart
+  const trendEl = $('trendChart');
+  if (trendEl && data.trend) {
+    const t = data.trend;
+    const maxP = Math.max(...t.map(d => d.price));
+    const minP = Math.min(...t.map(d => d.price));
+    const range = maxP - minP || 1;
+    const w = 280, h = 100;
+    const pad = { top: 10, bottom: 20, left: 0, right: 0 };
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+    const points = t.map((d, i) => {
+      const x = pad.left + (i / (t.length - 1)) * chartW;
+      const y = pad.top + chartH - ((d.price - minP + 2) / (range + 4)) * chartH;
+      return { x, y, ...d };
+    });
+    const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const areaD = pathD + ` L${points[points.length - 1].x},${pad.top + chartH} L${points[0].x},${pad.top + chartH} Z`;
+
+    trendEl.innerHTML = `
+      <div class="tc-header">
+        <span class="tc-title">近半年价格趋势</span>
+        <span class="tc-change up">↗ 呈上升趋势</span>
+      </div>
+      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;margin:4px auto 0;">
+        <defs>
+          <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0f7b63" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#0f7b63" stop-opacity="0.02"/>
+          </linearGradient>
+        </defs>
+        <path d="${areaD}" fill="url(#trendFill)" />
+        <path d="${pathD}" fill="none" stroke="#0f7b63" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3" fill="#0f7b63" stroke="#fff" stroke-width="1.5"/>`).join('')}
+      </svg>
+      <div class="tc-labels">
+        ${points.map(p => `<span class="tc-month">${p.month}</span>`).join('')}
+      </div>
+      <div class="tc-values">
+        ${points.map((p, i) => `<span class="tc-val" style="left:${(i / (t.length - 1)) * 100}%">${p.price}万</span>`).join('')}
+      </div>
+    `;
+  }
+
   // Reference cards
   const refContainer = $('refCards');
   if (refContainer) {
-    refContainer.innerHTML = data.units.map(u => `
+    refContainer.innerHTML = data.units.map(u => {
+      const tagHtml = u.tag ? `<span class="rc-tag ${u.tagClass}" data-tag="${u.tag}" data-desc="${u.tagDesc}" data-price="${u.price}" data-area="${u.area}">${u.tag}</span>` : '';
+      return `
       <div class="ref-card">
-        <div class="rc-badge">同小区</div>
+        <div class="rc-top">
+          <div class="rc-badge">同小区</div>
+          ${tagHtml}
+        </div>
         <div class="rc-detail-grid">
           <div><span>面积</span><strong>${u.area}</strong></div>
           <div><span>楼层</span><strong>${u.floor}</strong></div>
           <div><span>装修</span><strong>${u.decoration}</strong></div>
           <div><span>成交</span><strong class="price">${u.price}</strong></div>
         </div>
+        <div class="rc-meta-grid">
+          <div><span>成交日期</span>${u.date}</div>
+          <div><span>成交周期</span>${u.cycle}</div>
+          <div><span>调价次数</span>${u.priceChanges}</div>
+          <div><span>砍价幅度</span>${u.negotiation}</div>
+        </div>
         <div class="rc-diff">
           <div class="rc-diff-label">${u.diffLabel}</div>
           <div class="rc-diff-text">${u.diff}</div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
   // Models
@@ -617,6 +682,21 @@ function handleBack() {
   }
 }
 
+// ========== Tag Detail Sheet ==========
+function showTagDetail(data) {
+  $('sheetTitle').textContent = data.tag || '特殊标签';
+  $('sheetUnit').innerHTML = data.price
+    ? `<span><strong>参考价格</strong>${data.price}</span><span><strong>面积</strong>${data.area || '—'}</span>`
+    : '';
+  $('sheetDesc').textContent = data.desc || '';
+  const overlay = $('sheetOverlay');
+  overlay.hidden = false;
+}
+
+function hideTagSheet() {
+  $('sheetOverlay').hidden = true;
+}
+
 // ========== Init ==========
 function init() {
   // Community chips
@@ -709,6 +789,25 @@ function init() {
       compFilter = el.dataset.filter || 'all';
       renderCompetition();
     });
+  });
+
+  // Tag click → bottom sheet (event delegation)
+  $('refCards').addEventListener('click', e => {
+    const tag = e.target.closest('.rc-tag');
+    if (!tag) return;
+    e.stopPropagation();
+    showTagDetail({
+      tag: tag.dataset.tag,
+      desc: tag.dataset.desc,
+      price: tag.dataset.price,
+      area: tag.dataset.area
+    });
+  });
+
+  // Sheet close
+  $('sheetClose').addEventListener('click', hideTagSheet);
+  $('sheetOverlay').addEventListener('click', e => {
+    if (e.target === $('sheetOverlay')) hideTagSheet();
   });
 
   // Populate initial community
