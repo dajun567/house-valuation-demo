@@ -310,8 +310,54 @@ input:focus { outline: none; }
   transition: border-color 0.15s;
 }
 .form-input:focus { border-color: var(--primary); background: #fff; }
+.form-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  color: var(--ink);
+  background: #fafafa;
+  transition: border-color 0.15s;
+  appearance: auto;
+  cursor: pointer;
+}
+.form-select:focus { border-color: var(--primary); background: #fff; }
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  color: var(--ink);
+  background: #fafafa;
+  transition: border-color 0.15s;
+  resize: vertical;
+  min-height: 68px;
+  line-height: 1.5;
+}
+.form-textarea:focus { border-color: var(--primary); background: #fff; }
 .form-row { display: flex; gap: 12px; }
 .form-row .form-group { flex: 1; }
+
+.confirm-remark {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  display: none;
+}
+.confirm-remark::before {
+  content: '📝 备注';
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
 
 /* ====================================
    PAGE: 首页

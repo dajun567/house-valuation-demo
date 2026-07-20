@@ -223,6 +223,7 @@ function startCalculating() {
 // ========== Valuation Calculation ==========
 function calculateValuation(property) {
   const area = Number(property.area) || 108;
+  const decoration = property.decoration || '精装';
   // Simulated AI calculation based on property data
   const basePerSquareMeter = 29200; // 小区基础单价
   const baseValue = Math.round(basePerSquareMeter * area / 10000);
@@ -230,9 +231,14 @@ function calculateValuation(property) {
   let adjustments = [];
   let totalAdjust = 0;
 
-  const decorationAdj = { value: 12, label: '+ 精装保养好' };
-  adjustments.push(decorationAdj);
-  totalAdjust += 12;
+  // Decoration adjustment based on selected type
+  const decMap = { '清水': 0, '简装': 6, '精装': 12, '豪装': 18 };
+  const decVal = decMap[decoration] || 12;
+  const decLabel = decoration === '清水' ? '+ 清水/毛坯（无调整）' : `+ ${decoration}装修·品质好`;
+  if (decVal > 0) {
+    adjustments.push({ value: decVal, label: decLabel });
+    totalAdjust += decVal;
+  }
 
   const floorAdj = { value: 8, label: '+ 中高楼层·视野好' };
   adjustments.push(floorAdj);
@@ -394,7 +400,9 @@ function getFormProperty() {
     community: ($('vCommunity') && $('vCommunity').value) || SAMPLE_PROPERTY.community,
     building: ($('vBuilding') && $('vBuilding').value) || SAMPLE_PROPERTY.building,
     unit: ($('vUnit') && $('vUnit').value) || SAMPLE_PROPERTY.unit,
-    area: ($('vArea') && $('vArea').value) || SAMPLE_PROPERTY.area
+    area: ($('vArea') && $('vArea').value) || SAMPLE_PROPERTY.area,
+    decoration: ($('vDecoration') && $('vDecoration').value) || '精装',
+    remark: ($('vRemark') && $('vRemark').value) || ''
   };
 }
 
@@ -402,6 +410,15 @@ function populateConfirmPage() {
   const prop = getFormProperty();
   $('confirmCommunity').innerHTML = `${prop.community} <span id="confirmUnit">${prop.building}${prop.unit}</span>`;
   $('confirmArea').textContent = prop.area + '㎡';
+  $('confirmDecoration').textContent = prop.decoration;
+  // Show remark if filled
+  const remarkEl = $('confirmRemark');
+  if (prop.remark && remarkEl) {
+    remarkEl.textContent = prop.remark;
+    remarkEl.style.display = 'block';
+  } else if (remarkEl) {
+    remarkEl.style.display = 'none';
+  }
 }
 
 // ========== Area Tab Switching ==========
